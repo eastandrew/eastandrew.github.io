@@ -1,0 +1,195 @@
+---
+title: 'R Notebook: DRC package and dose response modeling'
+author: "Andrew East"
+date: "2/23/18"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+After installing R and Rstudio, install the `drc` package by running the below code in your R console.
+Alternatively, enter the below code into a script and run in the Rstudio script editor.  Creating a script for consistency across projects and time is good practice. 
+```{r, results="hide", message=F, eval=F}
+install.packages("drc", repos="https://cloud.r-project.org")
+```
+
+After the `drc` package is installed, we'll make sure that R knows were going to use it.
+```{r, results="hide", message=F}
+library(drc)
+```
+
+By "library-ing" the package, R will now have available the functions that are included in the package.  The key here is that these functions are beyond the `base` package R is default installed with.  Additionally, a working knowledge of R and Rstudio download, command line interface, and data import are assumed.  This training session will however, included all data needed.
+
+The intent of this notebook is to familiarize a toxicolgist with dose-response modeling in R.  It is assumed that they know the details of different dose reponse relationships, their functions, and endpoints.
+
+##Initial Data
+
+As with any statistical adventure, we need to start with data.  The code below concatenates (`c()`) some data into vectors that will be our pretend toxicity test results.  Notice that the data is divided into `dose` and `resp` vectors.  
+```{r}
+dose <- c(0,0,0,
+          0.02,0.02,0.02,
+          0.036,0.036,0.036,
+          0.064,0.064,0.064,
+          0.112,0.112,0.112,
+          0.2,0.2,0.2)
+resp <- c(0,0.05,0.05,
+          0.1,0.15,0.05,
+          0.45,0.6,0.5,
+          0.7,0.75,0.8,
+          0.8,0.9,0.85
+          ,0.99,1,0.95)
+```
+
+Of note, due to this simplified data structure, the treatments (`dose`) are in order and the replicates are grouped.
+
+##Data Visualization
+
+To get a simplified sense of the data let's do some plotting.  We'll start with a scatterplot.
+```{r, fig.height=5, fig.width=5}
+plot(resp~dose)
+```
+
+Of note is the syntax of the `plot()` function; `Y~X` is the `formula` method.  `plot(x,y)` is also possible, but can create issues in more complex function syntax.
+
+Another way to visualize the data is a boxplot.  The boxplot method is more useful when relating to policy based toxicity tests.  i.e. NOEC and LOEC are determined by an ANOVA type test treating the doses as categorical factors.
+```{r, fig.height=5, fig.width=5}
+doseF <- factor(dose)
+boxplot(resp~doseF)
+```
+
+##ANOVA-based Analysis
+
+Accordingly, to continue the ANOVA frame of reference, the R code and output for a simple ANOVA and Tukey HSD test is:
+```{r, results="hold"}
+aov1 <- aov(resp~doseF)
+summary(aov1)
+TukeyHSD(aov1)
+```
+
+This output tells us that dose 0.02 is not statistically significantly different than the control at an alpha of 0.05.
+
+While this hypothesis testing approach is useful in its simplicity, there will be scenarios where prediction of adverse outcomes will be the desired endpoint.  i.e. given a water concentration, what percent of effect would we anticipate.  Clearly, some function is needed to interpolate between ttested concentrations.
+
+##Quantitative and Predictive Analysis
+
+We will start by using the `drm()` function to build a ***d***ose ***r***esponse ***m***odel object that will be used in several other analysis and visualization functions.  Always start with the help files `?drm`.
+
+
+```{r, results="hold"}
+?drm
+drm1 <- drm(resp~dose, fct=LL.2(), type="binomial")
+```
+Here, we can see the same `formula` layout as the `plot()` function above, the `fct=` argument is refering to specific mathematical function to use to fit to the data.  Here we are using `LL.2()` meaning a two parameter log-logistic function.  The type indicates whether data are quantal/binomial (eg. live vs dead) or continuous (eg. mass).  
+
+The easiest place to begin is by visualizing the model.
+```{r, fig.height=5, fig.width=5}
+plot(drm1)
+```
+
+We notice several things about this plot.  Firstly, the data have been summarized and only the means are plotted, the x-axis is log transformed, and the model appears to fit the data well by eye.  The below plots show a variety of adjustments to the plotting of a drm object.  `type=""` can display `all` the points or `confidence` intervals for instance.  `log=""` plots one (or both) of the axes on a log scale.  The last plot shows how to label the axes (`xlab="", ylab=""`) and how to adjust the x-axis to bring your control and first dose value a bit closer together by breaking the axis.
+
+Of note, the `par()` function is used to arrange these plots into a grid format (`mfrow=c(#,#)`) and reduces the margins around the plot (`mai=c(#,#,#,#)`) to bring them a bit closer.  The graphical parameters are brought back to default settings after the plots so the next plots are normal.
+```{r, fig.height=6, fig.width=6, warning=F, results="hold"}
+par(mfrow=c(2,2), mai=c(0.67,0.67,0.05,0.05))
+plot(drm1, type="all", log="")
+plot(drm1, type="all", log="x")
+plot(drm1, type="confidence")
+plot(drm1, type="all", xlab="mg/L Methylethyldeath", 
+     ylab="Percent Mortality", broken=T, 
+     bp=0.0075, xt=c(0,0.02,0.036,0.064,0.112,0.2), 
+     xtlab=c("Control",0.02,0.036,0.064,0.112,0.2))
+par(mfrow=c(1,1), mai=c(1,1,1,1))
+```
+
+The next thing we'll want to do is establish whether the two parameter log-logistic function is the "best" model to explain these data.  the `mselect()` function is used to compare the fits of the available models and rank them according to Aikaike's Information Criteria (AIC).  To find out which models are available, the code `getMeanFunctions()` will display all that are available in the `drc` package.  Once the best performing model is determined, create a new drm object and compare it visually against the prior LL.2() model.
+```{r,warning=F, fig.height=5, fig.width=5, results="hold"}
+getMeanFunctions()
+mselect(drm1, list(LL.3(), W1.2()))
+drmw12 <- drm(resp~dose, fct=W1.2(), type="binomial")
+plot(drmw12, type="all", pch=16, lwd=2, 
+     xlab="mg/L Methylethyldeath", ylab="Percent Mortality", 
+     broken=T, bp=0.0075, xt=c(0,0.02,0.036,0.064,0.112,0.2), 
+     xtlab=c("Control",0.02,0.036,0.064,0.112,0.2))
+plot(drm1, type="none", add=T, col="red", lwd=2, broken=T, bp=0.0075)
+```
+
+Now that we have a model that fits well, let's use this model to make some predictions about toxicity endpoints.  For instance, an LC50.
+```{r}
+lc50 <- ED(drmw12, 50, interval="delta")
+```
+`lc50` gives us an estimate of the dose expected to cause 50% mortality, the standard error of that estimate, and upper and lower confidence intervals.  Once we know the concentration, we can also predict the distribution of mortalities expected from exposure to that concentration.
+```{r, warning=F}
+mort038 <- predict(drmw12, newdata=data.frame(lc50[1]), interval="confidence")
+mort038
+```
+With these values, we can plot a useful visulization of these confidence intervals.
+```{r, fig.width=5, fig.height=5, warning=F, results="hold"}
+plot(drmw12, type="all", pch=16, lwd=2, 
+     xlab="mg/L Methylethyldeath", ylab="Percent Mortality", 
+     broken=T, bp=0.0075, xt=c(0,0.02,0.036,0.064,0.112,0.2), 
+     xtlab=c("Control",0.02,0.036,0.064,0.112,0.2))
+arrows(lc50[3],0.5,lc50[4],0.5, length=0.1, angle=90, code=3)
+arrows(lc50[1],mort038[2],lc50[1],mort038[3], length=0.1, angle=90, code=3)
+```
+
+This plot is essentially what `type="confidence"` is returning and visually describes the interation between the stochastic death and individual threshold mortality models.  (see GUTS model for further info)
+```{r, fig.width=5, fig.height=5, warning=F, results="hold"}
+plot(drmw12, type="confidence", xlab="mg/L Methylethyldeath", ylab="Percent Mortality")
+arrows(lc50[3],0.5,lc50[4],0.5, length=0.1, angle=90, code=3)
+arrows(lc50[1],mort038[2],lc50[1],mort038[3], length=0.1, angle=90, code=3)
+```
+
+
+##Compare multiple treatment types
+
+In this section, we're going to use data that comes with the `drc` package and represents the mortality response of multiple different types of selenium.
+
+```{r}
+head(selenium)
+```
+
+In this dataframe, there is a concentration vector, a total vector, a dead vector, and a type vector.  Concentration represents the dose or exposure concentration, total represents the total number of animals at the beginning of exposure, dead represents the number that died during the exposure, and type represents the type of selenium the animals were exposed to.  In this case, type is a group or category.
+
+```{r, fig.width=5, fig.height=5, results="hold"}
+seldrm <- drm((dead/total)~conc, curveid=type, data=selenium, fct=LL.2(), type="binomial")
+plot(seldrm, ylim=c(0,1), legendPos=c(5,1))
+summary(seldrm)
+```
+
+The above dose response model fits the same function to 4 different response groups defined by `curveid=type`.  Accordingly, when we look at LC50 values (below) we can identify that the responses may be different.
+
+```{r}
+ED(seldrm, 50, interval="delta")
+```
+
+First thing to note is the decrease in resistance as the type increases.  Second thing to note is the variation in error.  With that in mind it may be worth checking for statistical significance of the difference in estimates doue to the variation.
+
+```{r, results="hold"}
+compParm(seldrm, "e", operator="-")  
+#comparison of inflection point parameter "e" (analogous to lc50)
+compParm(seldrm, "b", operator="-")  
+#comparison of slope parameter "b" (analogous to linear slope around lc50 point)
+```
+
+As the above statistical tests show, the difference between model parameters are not significant for any types of selenium treatments.  This is most likely a factor of the large variation observed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
