@@ -39,7 +39,7 @@ Having trouble with Pages? Check out our [documentation](https://help.github.com
 
 
 ### Test
-```r
+```markdown
 testobj <- rnorm(10,1,1)
 hist(testobj
 ```
