@@ -1,5 +1,7 @@
 ## Welcome to GitHub Pages
 
+### Page generally under construction/used for file transfer rather than sharing
+
 You can use the [editor on GitHub](https://github.com/eastandrew/eastandrew.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
