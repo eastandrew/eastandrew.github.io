@@ -43,7 +43,7 @@ Having trouble with Pages? Check out our [documentation](https://help.github.com
 ### Test
 ```markdown
 testobj <- rnorm(10,1,1)
-hist(testobj
+hist(testobj)
 ```
 ### To remember
 [Github/R website](http://www.emilyzabor.com/tutorials/rmarkdown_websites_tutorial.html)
