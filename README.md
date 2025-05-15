@@ -1,6 +1,4 @@
-# 
-
-## Page generally under construction/used for file transfer rather than sharing
+# Page generally under construction/development
 
 You can use the [editor on GitHub](https://github.com/eastandrew/eastandrew.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
