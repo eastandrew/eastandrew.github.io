@@ -1,4 +1,4 @@
-#  
+# Dumping ground for ideas and stuff
 
 ## Jon and Matt:
 
