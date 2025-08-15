@@ -17,6 +17,12 @@ This needs to be revisited and combined with [sensitivity analysis](https://gith
 
 See [github repo](https://github.com/eastandrew/uptakeresampling). Run in R on your machine.
 
+In R:
+
+`library(shiny)`
+
+`runGitHub("uptakeresampling", "eastandrew")`
+
 ## Influence of sample size on HC5 estimation in SSD:
 Andrew's axe to grind that small sample sizes mean the lower tail has been poorly sampled and low magnitude thresholds (e.g HC5s) are subsequently higher than "true." 
 
