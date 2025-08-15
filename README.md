@@ -45,7 +45,9 @@ To interpolate survival at time rather than time-specific effect values that are
 ## STP Search Script:
 To ease standardized web searches for Substance Toxicity Profiles.
 
-[Click here](https://eastandrew.github.io/STPSearch/STPSearch_v10.bat) to get .bat script directly (up to you to check for updates).
+[Click here](https://eastandrew.github.io/STPSearch/STPSearch_v10.bat) to get .bat script directly (up to you to be cognizant that .bat scripts are automation scripts and your employer/computer admin/security settings may not be cool with this).
+
+[Click here](https://eastandrew.github.io/STPSearch/STPSearch_v10.txt) to get the script as a .txt file that you will need to save-as to a .bat file in a text editor.
 
 [Click here](https://github.com/eastandrew/snazzySTPsearchscript) to see the repository for instructions, changelog, to submit requests for new websites, etc.
 
