@@ -12,6 +12,11 @@ A more complete and obscured linear mixed effects model example.
 
 [Click here](https://eastandrew.github.io/lmerexample/morespecificmouseexample.html) to see actual example mixture model with data obscured.
 
+## Avian Exposure Widget:
+This needs to be revisited and combined with [sensitivity analysis](https://github.com/eastandrew/PFAS_sensitivity_analysis), but has the bones of a cool T2 project. Based on WEFH handbook food ingestion rate equations and Larson et al 2018, Zodrow et al 2020, Sample et al. 2025. Currently "parameterized" to PFOS, but conjoining with sensitivity analysis will change this.
+
+See [github repo](https://github.com/eastandrew/uptakeresampling). Run in R on your machine.
+
 ## Influence of sample size on HC5 estimation in SSD:
 Andrew's axe to grind that small sample sizes mean the lower tail has been poorly sampled and low magnitude thresholds (e.g HC5s) are subsequently higher than "true." 
 
