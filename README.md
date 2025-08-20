@@ -11,7 +11,6 @@ A more complex linear mixed effects model example that uses broom package to fit
 
 [Click here](https://eastandrew.github.io/lmerexample/morespecificmouseexample2.html) to see more complicated example mixture model.
 
-
 ## Avian Exposure Widget:
 This needs to be revisited and combined with [sensitivity analysis](https://github.com/eastandrew/PFAS_sensitivity_analysis), but has the bones of a cool T2 project. Based on WEFH handbook food ingestion rate equations and Larson et al 2018, Zodrow et al 2020, Sample et al. 2025. Currently "parameterized" to PFOS, but conjoining with sensitivity analysis will change this.
 
