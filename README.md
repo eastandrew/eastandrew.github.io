@@ -1,5 +1,12 @@
 # Dumping ground for ideas and widgets
 
+## Emily:
+Here's an example rendered .Rmd file that we'll modify to generate figures for the plant paper.
+
+Hit the code dropdowns to see the code chunks.  
+
+[Click here](https://eastandrew.github.io/plantBCF/PFASmixtureplantBCF.html) to see the draft kale results.
+
 ## Jon and Matt:
 A highly simplified linear mixed effects model example.
 
