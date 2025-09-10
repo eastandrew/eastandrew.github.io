@@ -1,0 +1,22 @@
+project:
+  type: website
+
+website:
+  title: "A. East Teaching Portfolio"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: pre_UMD.qmd
+        text: Prior to UMD ENST
+      - href: at_UMD.qmd
+        text: At UMD ENST
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: visual
+
