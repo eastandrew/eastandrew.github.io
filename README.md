@@ -1,4 +1,4 @@
-# Dumping ground for ideas and widgets
+# Ideas and widgets
 
 ## Emily:
 Here's an example rendered .Rmd file that we'll modify to generate figures for the plant paper.
